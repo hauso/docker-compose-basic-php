@@ -1,0 +1,10 @@
+# ignore .git (can be volume-mounted in development environment)
+.git/
+
+# ignore directories with meta-data
+.idea/
+
+
+# ignore docker configs for other images than  and the php-fpm's Dockerfile itself
+docker/
+!docker/nginx

@@ -1,0 +1,58 @@
+#  do-community/travellist-laravel-demo
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: tom
+        uid: 1000
+      context: .
+      dockerfile: Dockerfile
+    image: dc2test
+    container_name: dc2test-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./docker/web_root/:/var/www
+    networks:
+      - dc2test
+
+  db:
+    image: mysql:5.7
+    container_name: dc2test-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dc2test
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: dc2test
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - dc2test
+
+  nginx:
+    image: nginx:alpine
+    container_name: dc2test-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./docker/web_root:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    networks:
+      - dc2test
+
+  adminer:
+    image: adminer:4.7.6
+    container_name: dc2test-adminer
+    ports:
+      - "1100:8080"
+    networks:
+      - dc2test
+
+networks:
+  dc2test:
+    driver: bridge
